@@ -1,21 +1,27 @@
-const isInside = require('./isInside.js').isInside;
-const generatePoint = require('./generatePoint.js').generatePoint;
-const calculateError = require('./calculateError.js').calculateError;
-const times = 100000000;
-
+const checkHash = require('./checkHash.js').checkHash;
+const generateHash = require('./generateHash.js').generateHash;
+var difficulty = 1;
+var secret = require('crypto').randomBytes(8).toString('hex');
 var main = () => {
-  var inside = 0;
-  var currentPoint = {};
-  for (var i = 0; i <= times; i++) {
-    currentPoint = generatePoint();
-    if (isInside(currentPoint)) inside++;
-  }
-  var pi = 4 * inside / times ;
-  console.log('Inside is : ' + inside);
-  console.log('Total is : ' + times);
-  console.log('Pi is : ' + Math.PI);
-  console.log('Calculated pi is : ' + pi);
-  console.log('Error: ' + calculateError(Math.PI, pi) + '%');
-  console.log('Max error: ' + 100 / Math.sqrt(times) + '%');
-}
+	console.time(`TIME FOR DIFFICULTY ${difficulty}`);
+	var found = false;
+	var nonce = -1;
+	var currentHash = '';
+	console.log(`SECRET: ${secret}`);
+	while (true) {
+		while (!found) {
+			nonce++;
+			currentHash = generateHash(secret, nonce);
+			found = checkHash(currentHash, difficulty);
+		}
+		console.log('DIFFICULTY: ' + difficulty);
+		console.log('HASH: ' + currentHash);
+		console.log('NONCE: ' + nonce);
+		console.timeEnd(`TIME FOR DIFFICULTY ${difficulty}`);
+		found = false;
+		nonce = 0;
+		difficulty++;
+		console.time(`TIME FOR DIFFICULTY ${difficulty}`);
+	}
+};
 main();
