@@ -1,1 +1,2 @@
-# montecarlo-pi-node
+# pow-node
+An experimental proof of work implemented in Node
